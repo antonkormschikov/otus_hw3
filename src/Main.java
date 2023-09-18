@@ -20,13 +20,6 @@ public class Main {
 
         }*/
         DBConnector dbConnector = new DBConnector();
-        dbConnector.execute("create table if not exists Students(\n" +
-                "id bigint,\n" +
-                "surname varchar,\n" +
-                "\"name\" varchar,\n" +
-                "patronymic varchar,\n" +
-                "sex varchar,\n" +
-                "group_id bigint\n" +
-                ")\n");
+        dbConnector.execute("drop table if exists Students;");
     }
 }
