@@ -55,6 +55,7 @@ inner join "Groups" g on g.id =s.group_id
 inner join curators c on c.id =g.curator_id 
 
 
+
 /*Вывести на экран количество студентов*/
 
 select count(*) from students

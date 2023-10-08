@@ -1,37 +1,49 @@
 package dataObj;
 
 public class Student {
-    private String name="";
-    private int age=-1;
-    private String id="";
+    private int id=-1;
+    private String fio="";
+    private String sex="";
+    private int group_id=-1;
 
-    public Student(String name, int age,String id){
-        this.name=name;
-        this.age=age;
+
+    public Student(int id, String fio, String sex, int group_id){
         this.id=id;
+        this.fio=fio;
+        this.sex=sex;
+        this.group_id=group_id;
+
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public String getFio() {
+        return fio;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public int getGroup_id() {
+        return group_id;
+    }
+
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public void setFio(String fio) {
+        this.fio = fio;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public void setGroup_id(int group_id) {
+        this.group_id = group_id;
     }
 }

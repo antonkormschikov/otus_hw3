@@ -2,10 +2,7 @@ package db;
 
 import settings.Settings;
 
-import java.sql.Statement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -13,14 +10,10 @@ public class DBConnector implements IDBConnector{
 
     private static Connection connection = null;
     private static Statement statement = null;
-    private Map<String,String> settings;
 
-    public DBConnector(){
-        this.settings = new Settings().getDbSettings();
-    }
 
     private void open(){
-
+        Map<String, String> settings = new Settings().getDbSettings();
         try{
             if (connection == null){
                 connection = DriverManager.getConnection(settings.get("db_url")+"/"
@@ -40,13 +33,13 @@ public class DBConnector implements IDBConnector{
             statement.execute(sqlRequest);
         } catch (SQLException ex){
             ex.printStackTrace();
-        }finally {
+        }/*finally {
             this.close();
-        }
+        }*/
 
     }
 
-    public void close(){
+    public static void close(){
 
     if (statement != null) {
         try {
@@ -61,9 +54,17 @@ public class DBConnector implements IDBConnector{
     }
     }
 
-    public List executeQuery(){
-        return null;
-    }
+   public ResultSet executeQuery (String sqlRequest){
+        this.open();
+        try{
+            return statement.executeQuery(sqlRequest);
+        } catch (SQLException ex){
+            ex.printStackTrace();
+            return null;
+        }
+
+   }
+
 
 
 
