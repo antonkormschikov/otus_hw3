@@ -92,9 +92,11 @@ public abstract class AbsTable implements ITable{
         if (option!=null) sqlQuery+= " "+option;
 
         return dbConnector.executeQuery(sqlQuery);
+    }
 
-
-
+    public void updateTable (String updData,String options){
+        String sqlQuery=String.format("update %s set %s where %s ;", tableName,updData, options);
+        dbConnector.execute(sqlQuery);
     }
 
 }
