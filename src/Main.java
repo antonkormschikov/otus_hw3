@@ -8,13 +8,14 @@ import tables.AbsTable;
 import tables.CuratorsTable;
 import tables.GroupsTable;
 import tables.StudentsTable;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import static tools.printResultSet.printRS;
 
 public class Main {
 
@@ -48,60 +49,65 @@ public class Main {
            System.out.println("Выводим свисок всех студентов");
 
            ResultSet resultSet = studentsTable.scriptGen("students.id, students.fio, students.sex, groups.name as group_name, curators.fio as curator_fio ","students","curators","groups","where students.group_id=groups.id and groups.curator_id=curators.id");
-           while (resultSet.next()) {
-               System.out.println(String.format("%d  %s  %s  %s %s" , resultSet.getInt(1),
-                                                           resultSet.getString(2),
-                                                           resultSet.getString(3),
-                                                           resultSet.getString(4),
-                                                           resultSet.getString(5)));
-           }
-            resultSet.close();
-           System.out.println("-------------------------------------");
-           /*Вывести на экран количество студентов*/
 
+           if (!resultSet.isBeforeFirst()){
+               System.out.println("Запрос вернул пустой ответ");
+           } else {
+               printRS(resultSet);
+           }
+           System.out.println("-------------------------------------");
+
+
+           /*Вывести на экран количество студентов*/
+           resultSet=null;
            resultSet=studentsTable.scriptGen("count(*)","students",null,null,null);
-           while (resultSet.next()) {
+           while (!resultSet.isBeforeFirst()) {
                System.out.println(String.format("Всего студентов - %d", resultSet.getInt(1)));
            }
-
            System.out.println("-------------------------------------");
+
            /*Вывести студенток*/
            System.out.println("Выводим только студенток");
-
-          resultSet = studentsTable.scriptGen("students.id, students.fio, students.sex, groups.name as group_name, curators.fio as curator_fio ","students","curators","groups","where students.group_id=groups.id and groups.curator_id=curators.id and students.sex='female'");
-           while (resultSet.next()) {
-               System.out.println(String.format("%d  %s  %s  %s %s" , resultSet.getInt(1),
-                       resultSet.getString(2),
-                       resultSet.getString(3),
-                       resultSet.getString(4),
-                       resultSet.getString(5)));
+           if (!resultSet.isBeforeFirst()){
+               System.out.println("Запрос вернул пустой ответ");
+           } else {
+               printRS(resultSet);
            }
            System.out.println("-------------------------------------");
 
            /*Обновить данные по группе сменив куратора*/
            System.out.println("Обновляем данные по группе, сменив в группе 3;PythonTestGroup куратора с Куратор3 на Куратор4");
 
-           groupsTable.updateTable("curator_id=4","curator_id=3");
+           groupsTable.updateTable("curator_id=4","id=3");
            System.out.println("-------------------------------------");
            /*Вывести список групп с их кураторами*/
            System.out.println("Выводим список групп с их кураторами");
-           resultSet = groupsTable.scriptGen("groups.id,groups.name as group_name, curators.fio as curator_fio ","groups","curators",null,"where groups.curator_id=curators.id");
-           while (resultSet.next()) {
-               System.out.println(String.format("%d  %s  %s" , resultSet.getInt(1),
-                       resultSet.getString(2),
-                       resultSet.getString(3)
-                                              ));
+           resultSet=null;
+           resultSet=groupsTable.scriptGen("groups.id,groups.name, curators.fio as curators_fio","groups","curators",null,"where groups.curator_id=curators.id");
+           if (!resultSet.isBeforeFirst()){
+               System.out.println("Запрос вернул пустой ответ");
+           } else {
+               printRS(resultSet);
            }
            System.out.println("-------------------------------------");
 
            /*Используя вложенные запросы вывести на экран студентов из определенной группы(поиск по имени группы)*/
            System.out.println("Поиск студентов по названию группы. Введите название группы");
+           resultSet=null;
            String st="";
            Scanner scanner = new Scanner(System.in);
            st=scanner.nextLine().toUpperCase();
-           System.out.println(st);
 
-        } catch (SQLException e) {
+           resultSet=groupsTable.scriptGen("students.id,students.fio,students.sex","students",null,null,"where students.group_id=(select id from groups where upper(name) like '%"+st+"%')");
+
+           if (!resultSet.isBeforeFirst()){
+               System.out.println("Запрос вернул пустой ответ");
+           } else {
+               printRS(resultSet);
+           }
+           System.out.println("-------------------------------------");
+            System.out.println("Конец программы");
+           } catch (SQLException e) {
            throw new RuntimeException(e);
        } finally {
         if (deleteTables){

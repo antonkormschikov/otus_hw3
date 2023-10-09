@@ -95,8 +95,9 @@ public abstract class AbsTable implements ITable{
     }
 
     public void updateTable (String updData,String options){
-        String sqlQuery=String.format("update %s set %s where %s ;", tableName,updData, options);
+        String sqlQuery=String.format("update %s set %s where %s ;", this.tableName,updData, options);
         dbConnector.execute(sqlQuery);
     }
+
 
 }

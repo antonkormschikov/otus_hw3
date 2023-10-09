@@ -1,3 +1,7 @@
 /out
 /.idea
 *.iml
+.classpath
+.project
+*.eml
+hw3 scripts.sql
