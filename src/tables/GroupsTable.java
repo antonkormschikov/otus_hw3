@@ -25,26 +25,6 @@ public class GroupsTable extends AbsTable{
     }};
 
 
-    @Override
-    public List<Group> list(List<String> columns){
-        List<Group> result = new ArrayList<>();
 
-        ResultSet sqlResult = dbConnector.executeQuery(String.format("select %s from %s",this.convertCollumnsTable(columns),NAME));
-    try{
-        while (sqlResult.next()){
-            result.add(new Group(
-                    sqlResult.getInt(1),
-                    sqlResult.getString(2),
-                    sqlResult.getInt(3)
-            ));
-        }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-    }
-
-
-        return result;
-
-    }
 
 }

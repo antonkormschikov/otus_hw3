@@ -7,7 +7,7 @@ public interface ITable {
     void create();
     void delete ();
     void loadData();
-    ResultSet scriptGen(String cols, String a, String b, String c, String option);
+    ResultSet selectQuery(String cols, String table1, String table2, String table3, String option);
 
 
 
