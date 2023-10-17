@@ -11,6 +11,12 @@ public class printResultSet {
             ResultSetMetaData resultSetMetaData;
             resultSetMetaData=rs.getMetaData();
             int columnsCount=resultSetMetaData.getColumnCount();
+            String headers="";
+            for (int i=1; i<=columnsCount;i++){
+            headers+=resultSetMetaData.getColumnName(i)+" ";
+            }
+
+            System.out.println(headers.trim());
             String rezRowString="";
             while (rs.next()) {
                 for (int i=1;i<=columnsCount;i++){

@@ -2,14 +2,11 @@ package tables;
 
 import db.DBConnector;
 import db.IDBConnector;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.util.*;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltStrings.split;
 
 public abstract class AbsTable implements ITable{
     protected IDBConnector dbConnector = null;
