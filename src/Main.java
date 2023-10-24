@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import static tools.printResultSet.printRS;
+import static tools.PrintResultSet.printRS;
 
 public class Main {
 

@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class printResultSet {
+public class PrintResultSet {
 
     public static void printRS(ResultSet rs) throws SQLException {
 
