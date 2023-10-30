@@ -2,14 +2,11 @@ package tables;
 
 import db.DBConnector;
 import db.IDBConnector;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.util.*;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltStrings.split;
 
 public abstract class AbsTable implements ITable{
     protected IDBConnector dbConnector = null;
@@ -73,22 +70,12 @@ public abstract class AbsTable implements ITable{
         dbConnector.execute(String.format("drop table if exists %s;",this.tableName));
     }
 
-    protected String convertCollumnsTable(List<String> columns){
-        if (columns.isEmpty()) {
-            return "*";
-        } else return String.join(", ",columns);
-    }
-
-
-
-    public abstract List list(List<String> columns);
-
-    //cols - набор полей,  s - наличие таблицы students, с - наличие таблицы curators ,g - наличие таблицы groups, options - условия
-    public ResultSet scriptGen(String cols, String a, String b, String c, String option){
-        String sqlQuery = String.format("select %s from %s",cols,a);
+    //cols - набор полей,  таблицы, options - условия и джойны
+    public ResultSet selectQuery(String cols, String table1, String table2, String table3, String option){
+        String sqlQuery = String.format("select %s from %s",cols,table1);
         //if (b!=null) sqlQuery+= ", "+a;
-        if (b!=null) sqlQuery+= ", "+b;
-        if (c!=null) sqlQuery+= ", "+c;
+        if (table2!=null) sqlQuery+= ", "+table2;
+        if (table3!=null) sqlQuery+= ", "+table3;
         if (option!=null) sqlQuery+= " "+option;
 
         return dbConnector.executeQuery(sqlQuery);

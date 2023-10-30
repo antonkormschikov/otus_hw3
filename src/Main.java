@@ -1,21 +1,13 @@
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
-import settings.Settings;
-import dataObj.Student;
 import db.DBConnector;
 import tables.AbsTable;
 import tables.StudentsTable;
-import tables.AbsTable;
 import tables.CuratorsTable;
 import tables.GroupsTable;
-import tables.StudentsTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
-import static tools.printResultSet.printRS;
+import static tools.PrintResultSet.printRS;
 
 public class Main {
 
@@ -32,23 +24,23 @@ public class Main {
 
        try {
            /*Создаем таблицы*/
-        System.out.println("Создаем таблицы");
+        System.out.println("(1) Создаем таблицы");
         studentsTable.create();
         curatorsTable.create();
         groupsTable.create();
             /*Загружаем данные*/
-        System.out.println("Загружаем данные");
+        System.out.println("(2) Загружаем данные");
         studentsTable.loadData();
         curatorsTable.loadData();
         groupsTable.loadData();
            /*Вывести на экран информацию о всех студентах включая название группы и имя куратора
            select s.id, s.fio, s.sex, g."name" as group_name ,c.fio as curator_name
            from students s
-           inner join "Groups" g on g.id =s.group_id
+           inner join Groups g on g.id =s.group_id
            inner join curators c on c.id =g.curator_id*/
-           System.out.println("Выводим свисок всех студентов");
+           System.out.println("(3) Выводим свисок всех студентов");
 
-           ResultSet resultSet = studentsTable.scriptGen("students.id, students.fio, students.sex, groups.name as group_name, curators.fio as curator_fio ","students","curators","groups","where students.group_id=groups.id and groups.curator_id=curators.id");
+           ResultSet resultSet = studentsTable.selectQuery("students.id, students.fio, students.sex, groups.name as group_name, curators.fio as curator_fio ","students","curators","groups","where students.group_id=groups.id and groups.curator_id=curators.id");
 
            if (!resultSet.isBeforeFirst()){
                System.out.println("Запрос вернул пустой ответ");
@@ -57,17 +49,18 @@ public class Main {
            }
            System.out.println("-------------------------------------");
 
-
            /*Вывести на экран количество студентов*/
-           resultSet=null;
-           resultSet=studentsTable.scriptGen("count(*)","students",null,null,null);
-           while (!resultSet.isBeforeFirst()) {
-               System.out.println(String.format("Всего студентов - %d", resultSet.getInt(1)));
+           resultSet.close();
+           resultSet=studentsTable.selectQuery("count(*) as cnt","students",null,null,null);
+           if (resultSet.next()) {
+               System.out.println(String.format("(4) Всего студентов - %d", resultSet.getInt(1)));
            }
            System.out.println("-------------------------------------");
 
            /*Вывести студенток*/
-           System.out.println("Выводим только студенток");
+           resultSet.close();
+           resultSet=studentsTable.selectQuery("id,fio,sex","students",null,null,"where sex='female'");
+           System.out.println("(5) Выводим только студенток");
            if (!resultSet.isBeforeFirst()){
                System.out.println("Запрос вернул пустой ответ");
            } else {
@@ -76,14 +69,14 @@ public class Main {
            System.out.println("-------------------------------------");
 
            /*Обновить данные по группе сменив куратора*/
-           System.out.println("Обновляем данные по группе, сменив в группе 3;PythonTestGroup куратора с Куратор3 на Куратор4");
+           System.out.println("(6) Обновляем данные по группе, сменив в группе 3;PythonTestGroup куратора с Куратор3 на Куратор4");
 
            groupsTable.updateTable("curator_id=4","id=3");
            System.out.println("-------------------------------------");
            /*Вывести список групп с их кураторами*/
-           System.out.println("Выводим список групп с их кураторами");
-           resultSet=null;
-           resultSet=groupsTable.scriptGen("groups.id,groups.name, curators.fio as curators_fio","groups","curators",null,"where groups.curator_id=curators.id");
+           System.out.println("(7) Выводим список групп с их кураторами");
+           resultSet.close();
+           resultSet=groupsTable.selectQuery("groups.id,groups.name, curators.fio as curators_fio","groups","curators",null,"where groups.curator_id=curators.id");
            if (!resultSet.isBeforeFirst()){
                System.out.println("Запрос вернул пустой ответ");
            } else {
@@ -92,13 +85,13 @@ public class Main {
            System.out.println("-------------------------------------");
 
            /*Используя вложенные запросы вывести на экран студентов из определенной группы(поиск по имени группы)*/
-           System.out.println("Поиск студентов по названию группы. Введите название группы");
-           resultSet=null;
+           System.out.println("(8) Поиск студентов по названию группы (через подзапрос). Введите название группы или часть названия");
+           resultSet.close();
            String st="";
            Scanner scanner = new Scanner(System.in);
            st=scanner.nextLine().toUpperCase();
 
-           resultSet=groupsTable.scriptGen("students.id,students.fio,students.sex","students",null,null,"where students.group_id=(select id from groups where upper(name) like '%"+st+"%')");
+           resultSet=groupsTable.selectQuery("students.id,students.fio,students.sex","students",null,null,"where students.group_id in (select id from groups where upper(name) like '%"+st+"%')");
 
            if (!resultSet.isBeforeFirst()){
                System.out.println("Запрос вернул пустой ответ");
